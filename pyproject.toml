@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "homework23"
+version = "0.1.0"
+description = ""
+authors = ["AndriyBatig1992 <starickova.tan@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.104.1"
+uvicorn = {extras = ["standard"], version = "^0.24.0.post1"}
+alembic = "^1.12.1"
+sqlalchemy = "^2.0.23"
+psycopg2 = "^2.9.9"
+pydentic = {extras = ["email"], version = "^0.0.1.dev3"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
