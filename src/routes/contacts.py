@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from fastapi import Path, Depends, HTTPException, Query, status, APIRouter
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session
 from src.database.db import get_db
 from src.schemas import ContactModel, ContactFavoriteModel, ContactResponse
 from src.repository import contact as rep_contact
-
 
 router = APIRouter(prefix="/contacts", tags=["contact"])
 
@@ -66,7 +65,6 @@ async def favorite_update(
     return contact
 
 
-
 @router.delete("/{contact_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def remove_contact(contact_id: int = Path(ge=1), db: Session = Depends(get_db)):
     contact = await rep_contact.delete(contact_id, db)
@@ -75,29 +73,15 @@ async def remove_contact(contact_id: int = Path(ge=1), db: Session = Depends(get
     return None
 
 
+@router.get("/search_by/{query}", response_model=List[ContactResponse], tags=['search'], summary="Search contacts by name, lastname, email")
+async def search_by(query: Optional[str] = None,
+                         db: Session = Depends(get_db)):
+    contacts = await rep_contact.search_contacts(query, db)
+    if not contacts:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contact Not Found")
 
-@router.get("/search", response_model=List[ContactResponse])
-async def search_contacts(
-        first_name: str = None,
-        last_name: str = None,
-        email: str = None,
-        skip: int = 0,
-        limit: int = Query(default=10, le=100, ge=10),
-        db: Session =Depends(get_db)
-):
-    contacts = None
-    if first_name or last_name or email:
-        par = {
-            "first_name": first_name,
-            "last_name": last_name,
-            "email": email,
-            "skip": skip,
-            "limit": limit,
-        }
-        contacts = await rep_contact.search_contacts(par, db)
-    if contacts is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found")
     return contacts
+
 
 @router.get("/search/birtdays", response_model=List[ContactResponse])
 async def search_contacts(
@@ -114,9 +98,8 @@ async def search_contacts(
             "limit": limit,
         }
         contacts = await rep_contact.search_birthday(par, db)
-    if contacts is None:
+    if not contacts:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No contacts found")
     return contacts
-
 
 

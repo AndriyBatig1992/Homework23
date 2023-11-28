@@ -21,7 +21,6 @@ URI = f"postgresql://{username}:{password}@{domain}:{port}/{database}"
 engine = create_engine(URI, echo=True)
 DBSession = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
-
 def get_db():
     db = DBSession()
     try:
@@ -31,3 +30,4 @@ def get_db():
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(err))
     finally:
         db.close()
+

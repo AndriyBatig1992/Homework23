@@ -25,3 +25,5 @@ A
 static/styles.css,f\3\f35a01c46898352132ea5a64325a33d5080f4a64
 A
 migrations/env.py,1\d\1d5e98f855877457efdcea5bdbf1b44bb25f16f9
+J
+src/repository/training.py,8\5\85c38046ce37b8ebf93fc7ec5e3e13ca27522c00
